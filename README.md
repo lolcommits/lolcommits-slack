@@ -10,7 +10,12 @@
 every time you git commit code, and archives a lolcat style image with it. Git
 blame has never been so much fun!
 
-This plugin ...
+This plugin automatically posts your lolcommits to one (or more)
+[Slack](https://slack.com) channels.
+
+The Slack post will contain the git commit message and repo name. The SHA is
+used as the uploaded image file name. Posting will be retried (once) should any
+error occur.
 
 ## Requirements
 
@@ -28,18 +33,28 @@ lolcommits first. Then run the following:
 
 ## Configuration
 
-Next configure and enable this plugin with:
+Next configure and enable with:
 
     $ lolcommits --config -p slack
     # set enabled to `true`
-    # you'll be prompted to enter an access token and Slack channel list
+    # enter your access token and Slack channel ID list (see below)
+
+That's it! Every lolcommit will now be posted to these Slack channels. To
+disable simply reconfigure with `enabled: false`.
 
 ### Access Token
 
+This plugin uses Slack [legacy
+tokens](https://api.slack.com/custom-integrations/legacy-tokens) for
+authentication. Create (or grab) them
+[here](https://api.slack.com/custom-integrations/legacy-tokens).
+
 ### Channel List
 
-That's it! Every lolcommit will now be posted to these Slack channels. To
-disable simply reconfigure and set `enabled: false`
+You must supply one or more Slack channel *IDs*. You can use Slack's own
+[API testing tool](https://api.slack.com/methods/channels.list/test)
+to list all Slack channels in your account, and grab the IDs from the JSON
+response presented.
 
 ## Development
 
