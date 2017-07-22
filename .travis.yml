@@ -1,0 +1,24 @@
+sudo: false
+language: ruby
+cache: bundler
+rvm:
+ - 2.0.0
+ - 2.1.7
+ - 2.2.4
+ - 2.3.3
+ - 2.4.1
+ - ruby-head
+
+before_install:
+ - gem install bundler -v 1.13.7
+ - git --version
+ - git config --global user.email "lol@commits.org"
+ - git config --global user.name "Lolcommits"
+
+matrix:
+  allow_failures:
+    - rvm: ruby-head
+
+branches:
+  except:
+    - gh-pages

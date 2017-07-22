@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+set -vx
+
+# install deps
+bundle install
+
+# generate docs
+bundle exec rake rdoc
