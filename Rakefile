@@ -5,7 +5,7 @@ require "rdoc/task"
 # generate docs
 RDoc::Task.new do |rd|
   rd.main     = "README.md"
-  rd.title    = "Lolcommits Plugin Sample"
+  rd.title    = "Lolcommits Slack"
   rd.rdoc_dir = "doc"
   rd.options  << "--all"
   rd.rdoc_files.include("README.md", "LICENSE", "lib/**/*.rb")

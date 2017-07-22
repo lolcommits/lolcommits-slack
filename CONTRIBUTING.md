@@ -4,7 +4,7 @@ Pull Requests are welcome! To start helping out:
 
 [Fork](https://guides.github.com/activities/forking) then clone the repository:
 
-    git clone git@github.com:your-username/lolcommits-plugin-sample.git
+    git clone git@github.com:your-username/lolcommits-slack.git
 
 Create your feature branch:
 
@@ -15,7 +15,7 @@ When you are happy with your change, run the full test suite:
     bundle exec rake
 
 With a passing test suite, commit your changes, push and submit a new [Pull
-Request](https://github.com/lolcommits/lolcommits-plugin-sample/compare):
+Request](https://github.com/lolcommits/lolcommits-slack/compare):
 
     git commit -am 'Added some feature'
     git push origin my-new-feature
@@ -27,7 +27,7 @@ request gets accepted:
 
 * Explain what your are doing (and why) in your Pull Request description.
 * If you are fixing an
-  [issue](https://github.com/lolcommits/lolcommits-plugin-sample/issues), link to
+  [issue](https://github.com/lolcommits/lolcommits-slack/issues), link to
   it in your description and [mention
   it](https://help.github.com/articles/closing-issues-via-commit-messages) in
   the commit message.
