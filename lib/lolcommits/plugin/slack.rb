@@ -4,8 +4,11 @@ require 'rest_client'
 module Lolcommits
   module Plugin
     class Slack < Base
+      # Slack API File upload endpoint
       ENDPOINT_URL = 'https://slack.com/api/files.upload'.freeze
-      RETRY_COUNT  = 2
+
+      # Number of times to retry if RestClient.post fails
+      RETRY_COUNT = 2
 
       ##
       # Returns the name of the plugin.
