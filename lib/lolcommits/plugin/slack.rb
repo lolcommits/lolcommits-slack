@@ -48,6 +48,7 @@ module Lolcommits
       def run_capture_ready
         retries = RETRY_COUNT
         begin
+          print "Posting to Slack ... "
           response = RestClient.post(
             ENDPOINT_URL,
             file: File.new(runner.main_image),
@@ -59,14 +60,16 @@ module Lolcommits
           )
 
           debug response
+          print "done!\n"
         rescue => e
           retries -= 1
-          puts "Posting to Slack failed - #{e.message}"
+          print "failed! #{e.message}"
           if retries > 0
-            puts "retrying ..."
+            print " - retrying ...\n"
             retry
           else
-            puts 'Giving up.. try running config again:'
+            print " - giving up ...\n"
+            puts 'Try running config again:'
             puts "\tlolcommits --config --p slack"
           end
         end

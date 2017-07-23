@@ -59,7 +59,8 @@ describe Lolcommits::Plugin::Slack do
         stub_request(:any, plugin.class::ENDPOINT_URL)
         in_repo do
           plugin.config = valid_enabled_config
-          plugin.run_capture_ready
+          output = fake_io_capture { plugin.run_capture_ready }
+          assert_equal output, "Posting to Slack ... done!\n"
 
           assert_requested :post, plugin.class::ENDPOINT_URL,
             headers: { 'Content-Type' => /multipart\/form-data;/ },
@@ -73,7 +74,7 @@ describe Lolcommits::Plugin::Slack do
           plugin.config = valid_enabled_config
 
           Proc.new { plugin.run_capture_ready }.
-            must_output("Posting to Slack failed - Request Timeout\nretrying ...\nPosting to Slack failed - Request Timeout\nGiving up.. try running config again:\n\tlolcommits --config --p slack\n")
+            must_output("Posting to Slack ... failed! Request Timeout - retrying ...\nPosting to Slack ... failed! Request Timeout - giving up ...\nTry running config again:\n\tlolcommits --config --p slack\n")
 
           assert_requested :post, plugin.class::ENDPOINT_URL,
             headers: { 'Content-Type' => /multipart\/form-data;/ },
