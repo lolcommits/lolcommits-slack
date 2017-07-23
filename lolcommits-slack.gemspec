@@ -32,7 +32,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.0.0"
 
-  # limited by lolcommits yam gem dep (remove when yammer plugin extracted)
+  # limited by lolcommits yam gem dep (remove when yammer plugin extracted from
+  # lolcommits)
   spec.add_runtime_dependency "rest-client", "~> 1.8"
 
   spec.add_development_dependency "lolcommits", "~> 0.9.5" # "~> 0.9.6" TODO: use 0.9.6 before releasing gem
