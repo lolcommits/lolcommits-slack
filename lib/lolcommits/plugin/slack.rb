@@ -70,7 +70,7 @@ module Lolcommits
           else
             print " - giving up ...\n"
             puts 'Try running config again:'
-            puts "\tlolcommits --config --p slack"
+            puts "\tlolcommits --config -p slack"
           end
         end
       end
