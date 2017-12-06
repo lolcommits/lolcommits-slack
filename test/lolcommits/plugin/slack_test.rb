@@ -74,7 +74,7 @@ describe Lolcommits::Plugin::Slack do
           plugin.config = valid_enabled_config
 
           Proc.new { plugin.run_capture_ready }.
-            must_output("Posting to Slack ... failed! Request Timeout - retrying ...\nPosting to Slack ... failed! Request Timeout - giving up ...\nTry running config again:\n\tlolcommits --config -p slack\n")
+            must_output("Posting to Slack ... failed! Timed out connecting to server - retrying ...\nPosting to Slack ... failed! Timed out connecting to server - giving up ...\nTry running config again:\n\tlolcommits --config -p slack\n")
 
           assert_requested :post, plugin.class::ENDPOINT_URL,
             headers: { 'Content-Type' => /multipart\/form-data;/ },
@@ -104,7 +104,7 @@ describe Lolcommits::Plugin::Slack do
       it 'should allow plugin options to be configured' do
         configured_plugin_options = {}
 
-        output = fake_io_capture(inputs: %w(true abc-def c1,c3,c4)) do
+        fake_io_capture(inputs: %w(true abc-def c1,c3,c4)) do
           configured_plugin_options = plugin.configure_options!
         end
 
