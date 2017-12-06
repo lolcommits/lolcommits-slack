@@ -12,12 +12,7 @@ require 'lolcommits/test_helpers/git_repo'
 require 'lolcommits/test_helpers/fake_io'
 
 if ENV['COVERAGE']
-  if ENV['TRAVIS']
-    require 'coveralls'
-    Coveralls.wear!
-  else
-    require 'simplecov'
-  end
+  require 'simplecov'
 end
 
 # plugin gem test libs
