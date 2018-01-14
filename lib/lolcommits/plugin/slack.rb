@@ -11,17 +11,6 @@ module Lolcommits
       RETRY_COUNT = 2
 
       ##
-      # Returns the name of the plugin.
-      #
-      # Identifies the plugin to lolcommits.
-      #
-      # @return [String] the plugin name
-      #
-      def self.name
-        'slack'
-      end
-
-      ##
       # Returns position(s) of when this plugin should run during the capture
       # process.
       #
@@ -52,11 +41,11 @@ module Lolcommits
           response = RestClient.post(
             ENDPOINT_URL,
             file: File.new(runner.main_image),
-            token: configuration['access_token'],
+            token: configuration[:access_token],
             filetype: 'jpg',
             filename: runner.sha,
             title: runner.message + "[#{runner.vcs_info.repo}]",
-            channels: configuration['channels']
+            channels: configuration[:channels]
           )
 
           debug response
@@ -86,7 +75,7 @@ module Lolcommits
       def configure_options!
         options = super
 
-        if options['enabled']
+        if options[:enabled]
           print "open the url below and issue a token for your user:\n"
           print "https://api.slack.com/custom-integrations/legacy-tokens\n"
           print "enter the generated token below, then press enter: (e.g. xxxx-xxxxxxxxx-xxxx) \n"
@@ -97,23 +86,12 @@ module Lolcommits
           channels = parse_user_input(gets.strip)
 
           options.merge!(
-            'access_token' => code,
-            'channels'     => channels
+            access_token: code,
+            channels: channels
           )
         end
 
         options
-      end
-
-      ##
-      # Returns true/false indicating if the plugin has been configured.
-      #
-      # Checks the `access_token` ond `channels` options have been set.
-      #
-      # @return [Boolean] true/false
-      #
-      def configured?
-        !configuration['access_token'].nil? && !configuration['channels'].nil?
       end
     end
   end

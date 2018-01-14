@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "rest-client"
 
-  spec.add_development_dependency "lolcommits", "~> 0.9.6"
+  spec.add_development_dependency "lolcommits", ">= 0.10.0"
   spec.add_development_dependency "webmock"
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

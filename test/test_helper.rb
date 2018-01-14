@@ -1,13 +1,9 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
-# necessary libs from lolcommits (allowing plugin to run)
-require 'git'
-require 'lolcommits/runner'
-require 'lolcommits/vcs_info'
-require 'lolcommits/backends/git_info'
+# lolcommits gem
+require 'lolcommits'
 
-# lolcommit test helpers
-require 'webmock/minitest'
+# lolcommits test helpers
 require 'lolcommits/test_helpers/git_repo'
 require 'lolcommits/test_helpers/fake_io'
 
@@ -16,6 +12,7 @@ if ENV['COVERAGE']
 end
 
 # plugin gem test libs
+require 'webmock/minitest'
 require 'lolcommits/plugin/slack'
 require 'minitest/autorun'
 
