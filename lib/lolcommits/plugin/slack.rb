@@ -11,19 +11,6 @@ module Lolcommits
       RETRY_COUNT = 2
 
       ##
-      # Returns position(s) of when this plugin should run during the capture
-      # process.
-      #
-      # The lolcommit is posted to Slack when all proccessing has completed and
-      # the capture is ready.
-      #
-      # @return [Array] the position [:capture_ready]
-      #
-      def self.runner_order
-        [:capture_ready]
-      end
-
-      ##
       # Capture ready hook, runs after lolcommits captures a snapshot.
       #
       # Uses `RestClient` to post the lolcommit image to (one or more) Slack

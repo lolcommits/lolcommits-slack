@@ -5,10 +5,6 @@ describe Lolcommits::Plugin::Slack do
   include Lolcommits::TestHelpers::GitRepo
   include Lolcommits::TestHelpers::FakeIO
 
-  it 'should run on pre_capture and capture_ready' do
-    ::Lolcommits::Plugin::Slack.runner_order.must_equal [:capture_ready]
-  end
-
   describe 'with a runner' do
 
     def runner
