@@ -1,10 +1,10 @@
 # Lolcommits Slack
 
-[![Gem Version](https://img.shields.io/gem/v/lolcommits-slack.svg?style=flat)](http://rubygems.org/gems/lolcommits-slack)
-[![Travis Build Status](https://travis-ci.org/lolcommits/lolcommits-slack.svg?branch=master)](https://travis-ci.org/lolcommits/lolcommits-slack)
+[![Gem](https://img.shields.io/gem/v/lolcommits-slack.svg?style=flat)](http://rubygems.org/gems/lolcommits-slack)
+[![Travis](https://travis-ci.org/lolcommits/lolcommits-slack.svg?branch=master)](https://travis-ci.org/lolcommits/lolcommits-slack)
+[![Depfu](https://img.shields.io/depfu/lolcommits/lolcommits-slack.svg?style=flat)](https://depfu.com/github/lolcommits/lolcommits-slack)
 [![Maintainability](https://img.shields.io/codeclimate/maintainability/lolcommits/lolcommits-slack.svg)](https://codeclimate.com/github/lolcommits/lolcommits-slack/maintainability)
 [![Test Coverage](https://img.shields.io/codeclimate/c/lolcommits/lolcommits-slack.svg)](https://codeclimate.com/github/lolcommits/lolcommits-slack/test_coverage)
-[![Gem Dependency Status](https://gemnasium.com/badges/github.com/lolcommits/lolcommits-slack.svg)](https://gemnasium.com/github.com/lolcommits/lolcommits-slack)
 
 [lolcommits](https://lolcommits.github.io/) takes a snapshot with your webcam
 every time you git commit code, and archives a lolcat style image with it. Git
