@@ -83,6 +83,11 @@ If you think something is broken or missing, please raise a new
 [issue](https://github.com/lolcommits/lolcommits-slack/issues). Take
 a moment to check it hasn't been raised in the past (and possibly closed).
 
+## TODO
+
+- [ ] Use new Oauth / App (instead of legacy tokens)
+- [ ] Query for channel list and let user select
+
 ## Contributing
 
 Bug [reports](https://github.com/lolcommits/lolcommits-slack/issues) and [pull
