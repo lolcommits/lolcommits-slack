@@ -1,7 +1,7 @@
 # Lolcommits Slack
 
 [![Gem](https://img.shields.io/gem/v/lolcommits-slack.svg?style=flat)](http://rubygems.org/gems/lolcommits-slack)
-[![Travis](https://travis-ci.org/lolcommits/lolcommits-slack.svg?branch=master)](https://travis-ci.org/lolcommits/lolcommits-slack)
+[![Travis](https://img.shields.io/travis/com/lolcommits/lolcommits-slack/master.svg?style=flat)](https://travis-ci.com/lolcommits/lolcommits-slack)
 [![Depfu](https://img.shields.io/depfu/lolcommits/lolcommits-slack.svg?style=flat)](https://depfu.com/github/lolcommits/lolcommits-slack)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a866b41555abbda9dec0/maintainability)](https://codeclimate.com/github/lolcommits/lolcommits-slack/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a866b41555abbda9dec0/test_coverage)](https://codeclimate.com/github/lolcommits/lolcommits-slack/test_coverage)
@@ -96,7 +96,7 @@ GitHub.
 
 When submitting pull requests, remember to add tests covering any new behaviour,
 and ensure all tests are passing on [Travis
-CI](https://travis-ci.org/lolcommits/lolcommits-slack). Read the
+CI](https://travis-ci.com/lolcommits/lolcommits-slack). Read the
 [contributing
 guidelines](https://github.com/lolcommits/lolcommits-slack/blob/master/CONTRIBUTING.md)
 for more details.
@@ -114,7 +114,7 @@ The gem is available as open source under the terms of
 
 ## Links
 
-* [Travis CI](https://travis-ci.org/lolcommits/lolcommits-slack)
+* [Travis CI](https://travis-ci.com/lolcommits/lolcommits-slack)
 * [Test Coverage](https://codeclimate.com/github/lolcommits/lolcommits-slack/test_coverage)
 * [Code Climate](https://codeclimate.com/github/lolcommits/lolcommits-slack)
 * [RDoc](http://rdoc.info/projects/lolcommits/lolcommits-slack)
