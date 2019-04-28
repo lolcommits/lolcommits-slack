@@ -26,7 +26,7 @@ error occur.
 
 ## Installation
 
-Follow the [install guide](https://github.com/mroth/lolcommits#installation) for
+Follow the [install guide](https://github.com/lolcommits/lolcommits#installation) for
 lolcommits first. Then run the following:
 
     $ gem install lolcommits-slack
