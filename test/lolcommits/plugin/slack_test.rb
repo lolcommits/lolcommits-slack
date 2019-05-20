@@ -12,7 +12,7 @@ describe Lolcommits::Plugin::Slack do
     def runner
       # a simple lolcommits runner
       @_runner ||= Lolcommits::Runner.new(
-        main_image: Tempfile.new('test_image')
+        lolcommit_path: Tempfile.new('lolcommit.jpg')
       )
     end
 

@@ -15,13 +15,13 @@ module Lolcommits
       ##
       # Capture ready hook, runs after lolcommits captures a snapshot.
       #
-      # Uses `RestClient` to post the lolcommit image to (one or more) Slack
-      # channels. Posting will be retried (`RETRY_COUNT`) times if any error
-      # occurs.
+      # Uses `RestClient` to post the lolcommit to (one or more) Slack
+      # channels. Posting will be retried (`RETRY_COUNT`) times if any
+      # error occurs.
       #
-      # The post contains the git commit message, repo name and the SHA is used
-      # for the image filename. The response from the POST request is sent to
-      # the debug log.
+      # The post contains the git commit message, repo name and the SHA
+      # is used for the filename. The response from the POST
+      # request is sent to the debug log.
       #
       def run_capture_ready
         retries = RETRY_COUNT
@@ -29,7 +29,7 @@ module Lolcommits
           print "Posting to Slack ... "
           response = RestClient.post(
             ENDPOINT_URL,
-            file: File.new(runner.main_image),
+            file: File.new(runner.lolcommit_path),
             token: configuration[:access_token],
             filetype: 'jpg',
             filename: runner.sha,
@@ -56,8 +56,8 @@ module Lolcommits
       ##
       # Prompts the user to configure integration with Slack
       #
-      # Prompts user for a Slack `access_token` and a comma seperated list of
-      # valid Slack channel IDs.
+      # Prompts user for a Slack `access_token` and a comma seperated
+      # list of valid Slack channel IDs.
       #
       # @return [Hash] a hash of configured plugin options
       #
@@ -70,7 +70,7 @@ module Lolcommits
           print "enter the generated token below, then press enter: (e.g. xxxx-xxxxxxxxx-xxxx) \n"
           code = parse_user_input(gets.strip)
 
-          print "enter a comma-seperated list of channel ids to post images in, then press enter: (e.g. c1234567890,c1234567890)\n"
+          print "enter a comma-seperated list of channel ids to post lolcommits in, then press enter: (e.g. c1234567890,c1234567890)\n"
           print "note: you must use channel ids (not channel names). grab them from here; https://api.slack.com/methods/channels.list/test\n"
           channels = parse_user_input(gets.strip)
 
