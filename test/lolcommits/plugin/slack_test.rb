@@ -51,7 +51,7 @@ describe Lolcommits::Plugin::Slack do
           stub_request(:any, plugin.class::ENDPOINT_URL).to_timeout
           plugin.configuration = valid_enabled_config
 
-          Proc.new { plugin.run_capture_ready }.
+          _(Proc.new { plugin.run_capture_ready }).
             must_output("Posting to Slack ... failed! Timed out connecting to server - retrying ...\nPosting to Slack ... failed! Timed out connecting to server - giving up ...\nTry running config again:\n\tlolcommits --config -p slack\n")
 
           assert_requested :post, plugin.class::ENDPOINT_URL,
@@ -65,12 +65,12 @@ describe Lolcommits::Plugin::Slack do
 
     describe '#enabled?' do
       it 'should be false by default' do
-        plugin.enabled?.must_equal false
+        _(plugin.enabled?).must_equal false
       end
 
       it 'should true when configured' do
         plugin.configuration = valid_enabled_config
-        plugin.enabled?.must_equal true
+        _(plugin.enabled?).must_equal true
       end
     end
 
@@ -82,7 +82,7 @@ describe Lolcommits::Plugin::Slack do
           configured_plugin_options = plugin.configure_options!
         end
 
-        configured_plugin_options.must_equal({
+        _(configured_plugin_options).must_equal({
           enabled: true,
           access_token: 'abc-def',
           channels: 'c1,c3,c4'
@@ -91,12 +91,12 @@ describe Lolcommits::Plugin::Slack do
 
       describe '#valid_configuration?' do
         it 'should be false without config set' do
-          plugin.valid_configuration?.must_equal(false)
+          _(plugin.valid_configuration?).must_equal(false)
         end
 
         it 'should be true for a valid configuration' do
           plugin.configuration = valid_enabled_config
-          plugin.valid_configuration?.must_equal true
+          _(plugin.valid_configuration?).must_equal true
         end
       end
     end

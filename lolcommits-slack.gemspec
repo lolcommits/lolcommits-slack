@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.executables   = []
   spec.require_paths = ["lib"]
 
-  spec.required_ruby_version = ">= 2.3"
+  spec.required_ruby_version = ">= 2.4"
 
   spec.add_runtime_dependency "rest-client", ">= 2.1.0"
   spec.add_runtime_dependency "lolcommits", ">= 0.14.2"
