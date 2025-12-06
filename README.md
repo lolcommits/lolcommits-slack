@@ -11,11 +11,12 @@ webcam every time you git commit code, and archives a lolcat style image
 with it. Git blame has never been so much fun!
 
 This plugin automatically posts your lolcommits to one (or more)
-[Slack](https://slack.com) channels.
+[Slack](https://slack.com) channels using Slack's modern [file upload
+API](https://docs.slack.dev/messaging/working-with-files).
 
 The Slack post will contain the git commit message and repo name. The
-SHA is used as the uploaded file name. Posting will be retried (once)
-should any error occur.
+SHA is used as the uploaded file name. Each upload step will be retried
+(twice) should any error occur.
 
 ## Requirements
 
