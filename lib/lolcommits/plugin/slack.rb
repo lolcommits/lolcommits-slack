@@ -2,12 +2,14 @@
 
 require 'lolcommits/plugin/base'
 require 'rest_client'
+require 'json'
 
 module Lolcommits
   module Plugin
     class Slack < Base
-      # Slack API File upload endpoint
-      ENDPOINT_URL = 'https://slack.com/api/files.upload'.freeze
+      # Slack API endpoints
+      GET_UPLOAD_URL_ENDPOINT = 'https://slack.com/api/files.getUploadURLExternal'.freeze
+      COMPLETE_UPLOAD_ENDPOINT = 'https://slack.com/api/files.completeUploadExternal'.freeze
 
       # Number of times to retry if RestClient.post fails
       RETRY_COUNT = 2
@@ -16,41 +18,25 @@ module Lolcommits
       # Capture ready hook, runs after lolcommits captures a snapshot.
       #
       # Uses `RestClient` to post the lolcommit to (one or more) Slack
-      # channels. Posting will be retried (`RETRY_COUNT`) times if any
-      # error occurs.
+      # channels using the new 3-step upload process. Each step will be
+      # retried (`RETRY_COUNT`) times if any error occurs.
       #
       # The post contains the git commit message, repo name and the SHA
-      # is used for the filename. The response from the POST
+      # is used for the filename. The response from the final POST
       # request is sent to the debug log.
       #
       def run_capture_ready
-        retries = RETRY_COUNT
-        begin
-          print "Posting to Slack ... "
-          response = RestClient.post(
-            ENDPOINT_URL,
-            file: File.new(runner.lolcommit_path),
-            token: configuration[:access_token],
-            filetype: 'jpg',
-            filename: runner.sha,
-            title: runner.message + "[#{runner.vcs_info.repo}]",
-            channels: configuration[:channels]
-          )
+        print "Posting to Slack ... "
 
-          debug response
-          print "done!\n"
-        rescue => e
-          retries -= 1
-          print "failed! #{e.message}"
-          if retries > 0
-            print " - retrying ...\n"
-            retry
-          else
-            print " - giving up ...\n"
-            puts 'Try running config again:'
-            puts "\tlolcommits --config -p slack"
-          end
-        end
+        upload_url, file_id = get_upload_url
+        upload_file(upload_url)
+        complete_upload(file_id)
+
+        print "done!\n"
+      rescue => e
+        print "failed! #{e.message}\n"
+        puts 'Try running config again:'
+        puts "\tlolcommits --config -p slack"
       end
 
       ##
@@ -82,6 +68,110 @@ module Lolcommits
 
         options
       end
+
+      private
+
+      ##
+      # Step 1: Get upload URL from Slack
+      #
+      # @return [Array<String>] upload_url and file_id
+      #
+      def get_upload_url
+        retries = RETRY_COUNT
+        begin
+          response = RestClient.post(
+            GET_UPLOAD_URL_ENDPOINT,
+            {
+              filename: runner.sha,
+              length: File.size(runner.lolcommit_path)
+            },
+            {
+              Authorization: "Bearer #{configuration[:access_token]}"
+            }
+          )
+
+          result = JSON.parse(response.body)
+          debug "Step 1 response: #{result}"
+
+          unless result['ok']
+            raise "Slack API error: #{result['error']}"
+          end
+
+          [result['upload_url'], result['file_id']]
+        rescue => e
+          retries -= 1
+          if retries > 0
+            retry
+          else
+            raise e
+          end
+        end
+      end
+
+      ##
+      # Step 2: Upload file binary to the upload URL
+      #
+      # @param upload_url [String] the upload URL from step 1
+      #
+      def upload_file(upload_url)
+        retries = RETRY_COUNT
+        begin
+          RestClient.post(
+            upload_url,
+            {
+              file: File.new(runner.lolcommit_path)
+            }
+          )
+
+          debug "Step 2: File uploaded successfully"
+        rescue => e
+          retries -= 1
+          if retries > 0
+            retry
+          else
+            raise e
+          end
+        end
+      end
+
+      ##
+      # Step 3: Complete the upload and share to channels
+      #
+      # @param file_id [String] the file_id from step 1
+      #
+      def complete_upload(file_id)
+        retries = RETRY_COUNT
+        begin
+          title = runner.message + "[#{runner.vcs_info.repo}]"
+          files_json = JSON.generate([{ id: file_id, title: title }])
+
+          response = RestClient.post(
+            COMPLETE_UPLOAD_ENDPOINT,
+            {
+              files: files_json,
+              channels: configuration[:channels]
+            },
+            {
+              Authorization: "Bearer #{configuration[:access_token]}"
+            }
+          )
+
+          result = JSON.parse(response.body)
+          debug "Step 3 response: #{result}"
+
+          unless result['ok']
+            raise "Slack API error: #{result['error']}"
+          end
+        rescue => e
+          retries -= 1
+          if retries > 0
+            retry
+          else
+            raise e
+          end
+        end
+      end
+
     end
   end
 end

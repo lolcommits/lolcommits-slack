@@ -34,28 +34,133 @@ describe Lolcommits::Plugin::Slack do
       end
 
       it 'should post the message to slack' do
-        stub_request(:any, plugin.class::ENDPOINT_URL)
+        # Step 1: Stub getting upload URL
+        stub_request(:post, plugin.class::GET_UPLOAD_URL_ENDPOINT)
+          .to_return(
+            status: 200,
+            body: { ok: true, upload_url: "https://files.slack.com/upload/v1/ABC123", file_id: "F123ABC" }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+
+        # Step 2: Stub file upload to Slack's upload URL
+        stub_request(:post, /files\.slack\.com/)
+          .to_return(status: 200, body: '')
+
+        # Step 3: Stub completing the upload
+        stub_request(:post, plugin.class::COMPLETE_UPLOAD_ENDPOINT)
+          .to_return(
+            status: 200,
+            body: { ok: true }.to_json,
+            headers: { 'Content-Type' => 'application/json' }
+          )
+
         in_repo do
           plugin.configuration = valid_enabled_config
           output = fake_io_capture { plugin.run_capture_ready }
           assert_equal output, "Posting to Slack ... done!\n"
 
-          assert_requested :post, plugin.class::ENDPOINT_URL,
-            headers: { 'Content-Type' => /multipart\/form-data;/ },
+          # Verify Step 1: Get upload URL was called with Authorization header and correct parameters
+          assert_requested :post, plugin.class::GET_UPLOAD_URL_ENDPOINT,
+            headers: { 'Authorization' => 'Bearer acbd-1234-wxyz-5678' },
+            times: 1 do |req|
+              # Verify filename and length parameters are sent
+              req.body.include?('filename=') && req.body.include?('length=')
+            end
+
+          # Verify Step 2: File upload was called
+          assert_requested :post, /files\.slack\.com/,
             times: 1
+
+          # Verify Step 3: Complete upload was called with correct parameters
+          assert_requested :post, plugin.class::COMPLETE_UPLOAD_ENDPOINT,
+            headers: { 'Authorization' => 'Bearer acbd-1234-wxyz-5678' },
+            times: 1 do |req|
+              # Verify channels and files (as JSON) parameters are sent
+              req.body.include?('channels=c123%2Cc456') && req.body.include?('files=')
+            end
         end
       end
 
-      it 'should retry (and explain) if there is a failure (req timeout)' do
+      it 'should retry (and explain) if step 1 fails' do
         in_repo do
-          stub_request(:any, plugin.class::ENDPOINT_URL).to_timeout
+          # Stub step 1 to timeout
+          stub_request(:post, plugin.class::GET_UPLOAD_URL_ENDPOINT).to_timeout
+
           plugin.configuration = valid_enabled_config
 
           _(Proc.new { plugin.run_capture_ready }).
-            must_output("Posting to Slack ... failed! Timed out connecting to server - retrying ...\nPosting to Slack ... failed! Timed out connecting to server - giving up ...\nTry running config again:\n\tlolcommits --config -p slack\n")
+            must_output("Posting to Slack ... failed! Timed out connecting to server\nTry running config again:\n\tlolcommits --config -p slack\n")
 
-          assert_requested :post, plugin.class::ENDPOINT_URL,
-            headers: { 'Content-Type' => /multipart\/form-data;/ },
+          # Verify Step 1 was retried RETRY_COUNT times before giving up
+          assert_requested :post, plugin.class::GET_UPLOAD_URL_ENDPOINT,
+            headers: { 'Authorization' => 'Bearer acbd-1234-wxyz-5678' },
+            times: plugin.class::RETRY_COUNT
+        end
+      end
+
+      it 'should retry (and explain) if step 2 fails' do
+        in_repo do
+          # Step 1 succeeds
+          stub_request(:post, plugin.class::GET_UPLOAD_URL_ENDPOINT)
+            .to_return(
+              status: 200,
+              body: { ok: true, upload_url: "https://files.slack.com/upload/v1/ABC123", file_id: "F123ABC" }.to_json,
+              headers: { 'Content-Type' => 'application/json' }
+            )
+
+          # Step 2 times out
+          stub_request(:post, /files\.slack\.com/).to_timeout
+
+          plugin.configuration = valid_enabled_config
+
+          _(Proc.new { plugin.run_capture_ready }).
+            must_output("Posting to Slack ... failed! Timed out connecting to server\nTry running config again:\n\tlolcommits --config -p slack\n")
+
+          # Verify Step 1 was called once
+          assert_requested :post, plugin.class::GET_UPLOAD_URL_ENDPOINT,
+            headers: { 'Authorization' => 'Bearer acbd-1234-wxyz-5678' },
+            times: 1
+
+          # Verify Step 2 was retried RETRY_COUNT times
+          assert_requested :post, /files\.slack\.com/,
+            times: plugin.class::RETRY_COUNT
+        end
+      end
+
+      it 'should retry (and explain) if step 3 fails' do
+        in_repo do
+          # Step 1 succeeds
+          stub_request(:post, plugin.class::GET_UPLOAD_URL_ENDPOINT)
+            .to_return(
+              status: 200,
+              body: { ok: true, upload_url: "https://files.slack.com/upload/v1/ABC123", file_id: "F123ABC" }.to_json,
+              headers: { 'Content-Type' => 'application/json' }
+            )
+
+          # Step 2 succeeds
+          stub_request(:post, /files\.slack\.com/)
+            .to_return(status: 200, body: '')
+
+          # Step 3 times out
+          stub_request(:post, plugin.class::COMPLETE_UPLOAD_ENDPOINT).to_timeout
+
+          plugin.configuration = valid_enabled_config
+
+          _(Proc.new { plugin.run_capture_ready }).
+            must_output("Posting to Slack ... failed! Timed out connecting to server\nTry running config again:\n\tlolcommits --config -p slack\n")
+
+          # Verify Step 1 was called once
+          assert_requested :post, plugin.class::GET_UPLOAD_URL_ENDPOINT,
+            headers: { 'Authorization' => 'Bearer acbd-1234-wxyz-5678' },
+            times: 1
+
+          # Verify Step 2 was called once
+          assert_requested :post, /files\.slack\.com/,
+            times: 1
+
+          # Verify Step 3 was retried RETRY_COUNT times
+          assert_requested :post, plugin.class::COMPLETE_UPLOAD_ENDPOINT,
+            headers: { 'Authorization' => 'Bearer acbd-1234-wxyz-5678' },
             times: plugin.class::RETRY_COUNT
         end
       end
@@ -78,8 +183,9 @@ describe Lolcommits::Plugin::Slack do
       it 'should allow plugin options to be configured' do
         configured_plugin_options = {}
 
-        fake_io_capture(inputs: %w(true abc-def c1,c3,c4)) do
-          configured_plugin_options = plugin.configure_options!
+        # Use .dup to create mutable strings (frozen_string_literal compatibility)
+        fake_io_capture(inputs: %w(true abc-def c1,c3,c4).map(&:dup)) do
+          configured_plugin_options = plugin.send(:configure_options!)
         end
 
         _(configured_plugin_options).must_equal({
