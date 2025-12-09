@@ -39,24 +39,29 @@ Next configure and enable with:
 
     $ lolcommits --config -p slack
     # set enabled to `true`
-    # enter your access token and Slack channel ID list (see below)
+    # enter your Oauth User token and Slack channel ID list (see below)
 
 That's it! Every lolcommit will now be posted to these Slack channels.
 To disable simply reconfigure with `enabled: false`.
 
-### Access Token
+### Authentication
 
-This plugin uses Slack [legacy
-tokens](https://api.slack.com/custom-integrations/legacy-tokens) for
-authentication. Create (or grab) them
-[here](https://api.slack.com/custom-integrations/legacy-tokens).
+**NOTE**: This plugin no longer supports Slack [legacy
+tokens](https://api.slack.com/custom-integrations/legacy-tokens), a Slack app
+with OAuth is now required.
+
+* Open [this URL](https://api.slack.com/apps?new_app=1") to create a new Slack app (or view existing)
+* Ensure OAuth User Token Scopes includes `files:write`
+* Install the app to your Slack workspace
+* Use the app's User OAuth Token (e.g. xxxx-xxxxxxxxx-xxxx) when configuring
+  with `lolcommits --config -p slack`
 
 ### Channel List
 
-You must supply one or more Slack channel *IDs*. You can use Slack's own
-[API testing tool](https://api.slack.com/methods/channels.list/test) to
-list all Slack channels in your account, and grab the IDs from the JSON
-response presented.
+You must supply one or more Slack channel *IDs*.
+
+Grab a channel ID: right-click channel in side bar, select `View Channel
+Details` and look for a Channel ID e.g. `C0FPKDOJJ`
 
 ## Development
 
@@ -87,7 +92,6 @@ moment to check it hasn't been raised in the past (and possibly closed).
 
 ## TODO
 
-- [ ] Use new Oauth / App (instead of legacy tokens)
 - [ ] Query for channel list and let user select
 
 ## Contributing
